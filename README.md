@@ -1,2 +1,2 @@
 # toy-algorithms
-A sandbox for learning about and imporovement of algorithms and their implementations
+A sandbox for learning about and the improvement of algorithms and their implementations
