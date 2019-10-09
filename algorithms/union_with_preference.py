@@ -27,8 +27,9 @@ def union_df(a_df, b_df):
 
     # Use flag, append_array==1 to get a sub-array of b_df1 to append to a_df1. Return that.
     locs_ = np.where(append_array==1)
-    c_df_ = a_df1.append( b_df1.loc[ locs_ ] )
+    c_df_ = a_df1.append(b_df1.loc[ locs_ ])
     c_df = c_df_.sort_values(["time"])
+    c_df.reset_index(inplace=True)
 
     return c_df
 
@@ -43,4 +44,7 @@ if __name__ == "__main__":
     c_df = union_df(a_df, b_df)
 
     assert(c_df.shape[0] == 4)
-    assert(c_df['stock'] == pd.Series)
+    ref = pd.Series(['QQQ', 'MSFT', 'IBM', 'VJET'], name='stock')
+    assert(np.all(c_df['stock'] == ref))
+
+    print('\nAll tests passed')
