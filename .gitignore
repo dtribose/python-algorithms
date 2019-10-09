@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Virtual env
+.toyvenv
+
+# testing code
+algorithms/test_junk.py
+
 # C extensions
 *.so
 
