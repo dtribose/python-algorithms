@@ -1,6 +1,10 @@
 import pandas as pd
 import os
 import numpy as np
+import sqlite3
+import sqlalchemy as sa
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
 
 PF_ROOT = "C:\\Users\\David\\dev\\toy-algorithms"
 COLLECTION_ROOT = os.path.join(PF_ROOT, "pandas-fundamentals\\demos\\collection-master")
@@ -81,9 +85,9 @@ print("Number of types is {}".format(types))  # ==> implies 3414 !!
 
 # Get max of more limited selection of paintings on canvas.
 max_area = df1_paint['area'].max()
-print(max_area)
 ixm = df1_paint['area'].idxmax()
-print(df1_paint.loc[ixm])
+print()
+print("artist with the largest painting ({} mm**2) is {}".format(max_area, df1_paint.loc[ixm, 'artist']))
 
 dfgb = df1.groupby('artist')
 
@@ -142,8 +146,88 @@ print('\n', min_acquisition_years)
 # 1. Get only those titles that appear more than once for each artist.
 grouped_by_title = small_df.groupby('title')
 condition = lambda x: len(x.index) > 1
-filtered_df = grouped_by_title.filter(condition)
+duped_titles = grouped_by_title.filter(condition)
 print('')
-print(filtered_df['title'].unique())
+print(duped_titles['title'].unique())
 
-x = 1
+# now do this for all of df1
+grouped_by_title = df1.groupby('title')
+title_count = grouped_by_title.size().sort_values(ascending=False)
+print(title_count)
+
+condition = lambda x: len(x.index) > 1
+duped_titles = grouped_by_title.filter(condition)
+print('\nDuped Titles:')
+print(duped_titles['title'])
+
+dt_cp = duped_titles.copy()
+print(dt_cp['title'])
+
+dt_cp.sort_values('title', inplace=True)
+print('\nDuped Titles sorted:')
+print(dt_cp['title'])
+
+# Look at all art work for the smallest height by artist.
+print()
+min_height = df1.groupby('artist')['height'].agg(np.min)
+print(min_height)
+# 'van Elk, Ger' is the last one at 1000.0
+
+van_elk_array = np.where(df1['artist'].str.contains('van Elk, Ger'))
+veg_df1 = df1.iloc[van_elk_array]
+
+
+sm_excel_p2f = os.path.join(PF_ROOT, "small_no_index.xlsx")
+small_df.to_excel(sm_excel_p2f, index=False, columns=['artist', 'title', 'year'])
+
+multiple_p2f = os.path.join(PF_ROOT, "multiple_sheets.xlsx")
+
+with pd.ExcelWriter(multiple_p2f) as writer:
+    small_df.to_excel(writer, sheet_name='Preview', index=False)
+    df1.to_excel(writer, sheet_name="Complete", index=False)
+
+'''
+# already exists. See how to update.
+artist_db = os.path.join(PF_ROOT, 'artist.db')
+with sqlite3.connect(artist_db) as conn:
+    small_df.to_sql('SmallSet', conn)
+'''
+
+# @@@ implement postgres on my system
+#with sa.create_engine('postgresql://localhost/my_data') as conn:
+#    small_df.to_sql('SmallSet, conn')
+
+small_json_p2f = os.path.join(PF_ROOT, 'small_df.json')
+small_df.to_json(small_json_p2f, orient='table')
+
+## Plotting
+
+title_font = {'family': 'source sans pro',
+              'color': 'darkblue',
+              'weight': 'normal',
+              'size': 20,
+              }
+labels_font = {'family': 'consolas',
+               'color': 'darkred',
+               'weight': 'normal',
+               'size': 16,
+               }
+
+acquisition_years = df.groupby('acquisitionYear').size()
+#acquisition_years.plot()
+#plt.show()
+
+rcParams.update({'figure.autolayout': True,
+                 'axes.titlepad': 20})
+fig = plt.figure()
+subplot = fig.add_subplot(1,1,1)
+acquisition_years.plot(ax=subplot, rot=45, logy=True, grid=True)
+subplot.set_xlabel("Acquisition Year", fontdict=labels_font, labelpad=10)
+subplot.set_ylabel("Artworks Acquired", fontdict=labels_font)
+subplot.set_title("Tate Gallery Acquisitions", fontdict=title_font)
+subplot.locator_params(nbins=40, axis='x')
+fig.show()
+
+fig.savefig(os.path.join(PF_ROOT, 'plot.png'))
+
+fig.savefig(os.path.join(PF_ROOT, 'plot.svg'), format='svg')
