@@ -1,3 +1,4 @@
+from __future__ import annotations
 # Interview questions by the 15 questions on codementor.io page
 # Various extensions from there
 import os
@@ -9,6 +10,8 @@ import random
 import re
 from collections import namedtuple
 from dataclasses import dataclass
+import secrets
+
 
 
 def print_directory_contents(sPath):
@@ -350,6 +353,178 @@ def test_dataclass():
 
     print()
 
+# Classes section.
+# add type annotations
+# add cls members, @classmethod, and @staticmethod.
+class A(object):
+    def go(self):
+        print("go A go!")
+
+    def stop(self):
+        print("stop A stop!")
+
+    def pause(self):
+        raise Exception("Not Implemented")
+
+class B(A):
+    def go(self):
+        super(B, self).go()
+        print("go B go!")
+
+class C(A):
+    def go(self):
+        super(C, self).go()
+        print("go C go!")
+
+    def stop(self):
+        super(C, self).stop()
+        print("stop C stop!")
+
+class D(B, C):
+    def go(self):
+        super(D, self).go()
+        print("go D go!")
+
+    def stop(self):
+        super(D, self).stop()
+        print("stop D stop!")
+
+    def pause(self):
+        print("wait D wait!")
+
+class E(B, C):
+    pass
+
+
+def test_classes():
+
+    a = A()
+    b = B()
+    c = C()
+    d = D()
+    e = E()
+
+    # specify output from here onwards
+
+    a.go()
+    b.go()
+    c.go()
+    d.go()
+    e.go()
+
+    a.stop()
+    b.stop()
+    c.stop()
+    d.stop()
+    e.stop()
+
+    a.pause()
+    b.pause()
+    c.pause()
+    d.pause()
+    e.pause()
+
+    pass
+
+
+
+def test_secrets():
+
+    print()
+    secret = os.urandom(55)  # Old way.
+    print("Old urandom = {}".format(secret))
+    # New way is better than os.urandom...
+    s = secrets.SystemRandom()
+    # secret = secrets.SystemRandom.random()
+    print("My new secret, s.random()={}".format(s.random()))
+    print()
+
+
+def test_sql_join():
+
+    sql_join_example = \
+    """
+    SELECT bc.firstname, bc.lastname, b.title, TO_CHAR(bo.orderdate, 'MM/DD/YYYY') "Order Date", p.publishername
+    FROM
+    BOOK_CUSTOMER bc
+    INNER JOIN books b
+    ON b.BOOK_ID = bc.BOOK_ID
+    INNER JOIN book_order bo
+    ON bo.BOOK_ID = b.BOOK_ID
+    INNER JOIN publisher p
+    ON p.PUBLISHER_ID = b.PUBLISHER_ID
+    WHERE p.publishername = 'PRINTING IS US';
+    """
+
+class TreeNode():
+    def __init__(self, value,
+                 parent : Optional["TreeNode"]=None,
+                 left_child : Optional["TreeNode"]=None,
+                 right_child : Optional["TreeNode"]=None):
+        self.value = value
+        self.parent = parent
+        self.left_child = None
+        self.right_child = None
+        self.update_children(left_child, right_child)
+
+    def left(self):
+        return self.left_child
+
+    def right(self):
+        return self.right_child
+
+    def get_parent(self):
+        return self.parent
+
+    def set_parent(self, other):
+        self.parent = other
+
+    def update_children(self,
+                        left_child : Optional["TreeNode"] = None,
+                        right_child : Optional["TreeNode"] = None):
+        # update parents in children, if left or right not None.
+        if left_child:
+            self.left_child = left_child
+            self.left_child.set_parent(self)
+        if right_child:
+            self.right_child = right_child
+            self.right_child.set_parent(self)
+
+    def depth(self):
+        depth = 0
+        if self.left() or self.right():
+            depth += 1
+            ld = 0
+            rd = 0
+            if self.left():
+                ld = self.left().depth()
+            if self.right():
+                rd = self.right().depth()
+            depth += max(ld, rd)
+        return depth
+
+
+def test_binary_tree_size():
+    # Create a binary tree.
+    one = TreeNode(1)
+    two = TreeNode(2)
+    ten = TreeNode(10, left_child=one)
+    six = TreeNode(6, right_child=two)
+    eight = TreeNode(8)
+    nine = TreeNode(9)
+    seven = TreeNode(7, left_child=eight, right_child=ten)
+    three = TreeNode(3, left_child=six, right_child=nine)
+    five = TreeNode(5, left_child=three, right_child=seven)
+
+    depth_tree = five.depth()
+    print(f"Tree depth = {depth_tree}")
+
+    # add a new zero node to one.
+    zero = TreeNode(0)
+    one.update_children(right_child=zero)
+    depth_tree = five.depth()
+    print(f"Updated Tree depth = {depth_tree}")
+
 
 if __name__ == "__main__":
     # test_directory_printing()
@@ -357,11 +532,16 @@ if __name__ == "__main__":
     # test_at_property()
     # test_regular_expression()
     # test_lru_cache()
-    test_dataclass()
+    # test_dataclass()
+    # test_secrets()
 
+    '''
+    # Next two should be tested in more detail
+    test_classes()
+    test_sql_join()
+    '''
 
-
-
+    test_binary_tree_size()
 
 
     pass

@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 
+
 PF_ROOT = "C:\\Users\\David\\dev\\toy-algorithms"
 COLLECTION_ROOT = os.path.join(PF_ROOT, "pandas-fundamentals\\demos\\collection-master")
 
