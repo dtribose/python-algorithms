@@ -11,6 +11,7 @@ import re
 from collections import namedtuple
 from dataclasses import dataclass
 import secrets
+import heapq
 
 
 
@@ -125,6 +126,52 @@ def test_regular_expression():
     code, udir, msg = parse_re(m_string)
 
     print("'{}', '{}', '{}'".format(code, udir, msg))
+
+
+def test_regular_expression2():
+    str_line = '##INFO=<ID=AA,Number=1.0,Type=String,Description="Ancestral Allele">'
+
+    vals = re.search(r"\A##INFO=<", str_line)
+    sp = vals.span()
+    sub = str_line[sp[1]:-1]
+
+    # Use re's to search for and then parse particular fields.
+    vals = re.search(r"ID=[a-zA-Z]+,", sub)
+    sps = vals.span()
+    print(sub[sps[0]+3:sps[1]-1])
+
+    # Or select the specific field from the whole string
+    ff = re.search(r'(?<=ID=)[a-zA-Z]+(?=,)', sub)
+    id_val = ff.group(0)
+    print(f"ID_VAL = {id_val}")
+
+
+    search_patterns = ["Description", "Number", "ID", "Type"] # "ID", "Number", "Type",
+    dvals = {}
+    for ssp in search_patterns:
+        search_string = r'(?<=' + ssp + r'=)[\.a-zA-Z0-9 \"]+(?=,|\Z)'
+        ff = re.search(search_string, sub)
+        if ff:
+            dvals[ssp] = ff.group(0)
+
+    print(dvals)
+
+    sm = 'Description="A Crocker"'
+    search_pattern = "Description"
+    search_string = r'(?<=' + search_pattern + r'=)[a-zA-Z \"]+(?=,|\Z)'
+    fc = re.search(search_string, sm)
+    if fc:
+        print(fc.group(0))
+
+
+
+
+    x = 1
+
+
+
+
+
 
 
 class DB(dict):
@@ -526,6 +573,18 @@ def test_binary_tree_size():
     print(f"Updated Tree depth = {depth_tree}")
 
 
+def heapsort(it : Iterable[Any]):
+    h = []
+    for v in it:
+        heapq.heappush(h, v)
+    return [heapq.heappop(h) for i in range(len(h))]
+
+
+def test_heap_sort():
+    ll = [4, 6, -1, 19, -4, 8, 0, 17, 9]
+    print(f"Using heapsort to sort the list, {ll}, yeilds:\n{heapsort(ll)}")
+    
+
 if __name__ == "__main__":
     # test_directory_printing()
     # test_print_sort_mess()
@@ -541,8 +600,9 @@ if __name__ == "__main__":
     test_sql_join()
     '''
 
-    test_binary_tree_size()
-
+    #test_binary_tree_size()
+    #test_heap_sort()
+    test_regular_expression2()
 
     pass
 
