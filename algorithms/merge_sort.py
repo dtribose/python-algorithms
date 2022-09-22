@@ -1,27 +1,6 @@
 import time
 import math
 
-
-# in place OR copy and return sorted.
-
-# lts ==> list to sort
-def bad_sort(lts, compare):
-
-    s_list = list(lts)
-      
-    slen = len(s_list)
-    if slen < 2:
-        return s_list
-
-    sorted = False
-    while not sorted:
-        for a in lts:
-            for b in lts[a:]:
-                if compare(a,b) == False:
-                    cc = b
-    # ....
-
-
 def sorted_merge(list_a, list_b, f_compare):
     list_new = []
 
@@ -63,26 +42,44 @@ def merge_sort(list_in, f_compare=(lambda a,b: a < b)):
     else:
         mid_list = list_len//2
         list_a = list_in[:mid_list]
-        #print list_a
         list_b = list_in[mid_list:]
-        #print list_b
+        
         list_a = merge_sort(list_a)
         list_b = merge_sort(list_b)
-
         return sorted_merge(list_a, list_b, f_compare)
 
 
-def merge_sort_test():
-    print ("About to sort list: ", ll_test)
-
+def merge_sort_test(ll_test):
+    
+    print ("Sorting list: ", ll_test)
     sorted_ll = merge_sort(ll_test)
-
-    print("Sorted list: ", sorted_ll)
+    print("Sorted list:  ", sorted_ll)
 
 
 if __name__ == "__main__":
 
-    ll_test = [6,5,2,1,8,7,4,3,10,9]
-
-    merge_sort_test()
+    ll_test = [6,0,5,2,1,8,7,4,3,10,-1,99,9,-17,44,-6,12,1]
+    merge_sort_test(ll_test)
     
+
+
+"""
+# in place OR copy and return sorted.
+
+# lts ==> list to sort
+def bad_sort(lts, compare):
+
+    s_list = list(lts)
+      
+    slen = len(s_list)
+    if slen < 2:
+        return s_list
+
+    sorted = False
+    while not sorted:
+        for a in lts:
+            for b in lts[a:]:
+                if compare(a,b) == False:
+                    cc = b
+    # ....
+"""
