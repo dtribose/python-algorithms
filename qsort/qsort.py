@@ -21,6 +21,58 @@ def simple_quick_sort(unsorted):
     return simple_quick_sort(vals_below) + [pivot] + simple_quick_sort(vals_above)
 
 
+def hoare_quicksort(unsorted):
+
+    def swap_val(ll, i, j):
+        lli_temp = ll[i]
+        ll[i] = ll[j]
+        ll[j] = lli_temp
+        return
+
+    def sort_quick(ll, lo, hi):
+        length = hi - lo + 1
+        if length < 2:
+            return
+        elif length == 2:
+            if ll[lo] > ll[hi]:
+                swap_val(ll, lo, hi)
+            return
+
+        ipivot = hi
+        pivot = ll[ipivot]
+        ilo = lo
+        ihi = hi - 1
+
+        insert_pivot = None
+        while True:
+            while ll[ilo] <= pivot and ilo < ihi:
+                ilo += 1
+            if ilo < ihi:
+                while ll[ihi] > pivot and ihi > ilo:
+                    ihi -= 1
+                if ihi > ilo:
+                    swap_val(ll, ilo, ihi)
+                    insert_pivot = ihi
+                else:
+                    if ll[ihi] > pivot:
+                        insert_pivot = ihi
+                    break
+            else:
+                # print(f"ilo, insert_pivot, ipivot = {ilo}, {insert_pivot}, {ipivot}")
+                if ll[ilo] > pivot:
+                    insert_pivot = ilo
+                break
+
+        if insert_pivot:
+            swap_val(ll, insert_pivot, ipivot)
+            sort_quick(ll, lo, insert_pivot-1)
+            sort_quick(ll, insert_pivot+1, hi)
+        else:
+            sort_quick(ll, lo, hi-1)
+
+    sort_quick(unsorted, 0, len(unsorted)-1)
+
+
 def qqsort(unsorted_list, pivot_threshold_count=None):
     # in-place sorting of list
 
@@ -151,6 +203,14 @@ def run_test_sqs1():
     print(str(ll) + " is " + iss + "sorted")
 
 
+def run_test_hoare():
+    ll = [1, 8, 7, -11, -2, 5, 4, 16, 15, -5, -6, 3, 2]
+    print(f"Original unsorted list is: {ll}")
+    hoare_quicksort(ll)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + " is " + iss + "sorted")
+
+
 if __name__ == "__main__":
     run_test1()
     print("done with test 1\n")
@@ -162,6 +222,10 @@ if __name__ == "__main__":
     # print('done with test 4\n')
 
     run_test_sqs1()
-    print("done with tests sqs-1")
+    print("done with tests sqs-1\n")
+
+    run_test_hoare()
+    print('done with test hoare\n')
+
     x = 1
 
