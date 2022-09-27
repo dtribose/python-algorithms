@@ -1,80 +1,136 @@
 # Qsort algorithm
+from collections import deque
+import numpy as np
 
-def qsort(unsorted_list):
+
+def qqsort(unsorted_list, pivot_threshold_count=None):
     # find median value of first, last, and middle point
 
-    def swap_val(l, i, j):
-        xi = l[i]
-        l[i] = l[j]
-        l[j] = xi
+    if not pivot_threshold_count:
+        pivot_threshold_count = 34
+
+    def swap_val(ll, i, j):
+        lli_temp = ll[i]
+        ll[i] = ll[j]
+        ll[j] = lli_temp
         return
 
     # Use the real mean not just the middle one @@@
-    def mean_ix(l, triple):
-        first = triple[0]
-        second = triple[1]
-        third = triple[2]
-        a = l[first]
-        b = l[second]
-        c = l[third]
+    def mean_ix(ll, triple):
+        first, second, third = triple
+        a = ll[first]
+        b = ll[second]
+        c = ll[third]
 
-        if a < b:
-            if c < a:
+        if a <= b:
+            if c <= a:
                 return first
-            elif c > b:
-                return third
+            elif b <= c:
+                return second
             else:
+                return third
+        else:  # b < a
+            if c <= b:
                 return second
-        else: # b < a
-            if c < b:
-                return second
-            elif c > a:
+            elif a <= c:
                 return first
             else:
                 return third
 
-    def sort_quick(unsorted, min, max):
+    def sort_quick(unsorted, min_, max_):
 
         ll = unsorted
+        ulen = max_ - min_ + 1
 
-        ulen = max - min + 1
-
-        if ulen <= 1:  # @@@ can the number of points equal zero?
-            return
-        elif ulen == 2:
-            if ll[min] < ll[max]:
+        # Should never enter is ulen = 0 or 1
+        if ulen == 2:
+            if ll[min_] <= ll[max_]:
                 return
             else:
-                swap_val(ll, min, max)
+                # print(f"Swapping {ll[min_]} and {ll[max_]}")
+                swap_val(ll, min_, max_)
                 return
-        else:
-            pivot = mean_ix(ll, (min, max, (min + max) // 2))
-            pv = ll[pivot]
-            print("pivot value = {}".format(pv))
-            if pv == 8:
-                x = 0
-            swap_val(ll, min, pivot)
-            border = min + 1
-            while ll[border] < pv and border < max+1:
-                border += 1
+        elif ulen > pivot_threshold_count:
+            pivot = mean_ix(ll, (min_, max_, (min_ + max_) // 2))
+            swap_val(ll, max_, pivot)
 
-            for i in range(border + 1, max + 1):
-                if ll[i] < pv:
-                    swap_val(ll, border, i)
-                    border += 1
-            else:
-                border = border-1
+        pivot = border = max_
+        pivot_value = ll[pivot]
+        # print("pivot value = {}".format(pivot_value))  # test only
 
-            swap_val(ll, border, min)
+        swap_index = deque()
+        ii = min_
+        while ii < max_:
+            if ll[ii] > pivot_value:
+                swap_index.append(ii)
+            elif len(swap_index):
+                swap_val(ll, ii, swap_index.popleft())
+                swap_index.append(ii)
+            ii += 1
 
-            sort_quick(ll, min, border-1)
-            sort_quick(ll, border+1, max)
+        if len(swap_index):
+            border = swap_index.popleft()
+            swap_val(ll, pivot, border)
 
-            return
+        # print(ll[min_:max_+1])
 
-    return sort_quick(unsorted_list, 0, len(unsorted_list) - 1)
+        if border-1 - min_ > 0:
+            sort_quick(ll, min_, border-1)
+        if max_ - (border+1) > 0:
+            sort_quick(ll, border+1, max_)
+
+    sort_quick(unsorted_list, 0, len(unsorted_list) - 1)
 
 
-ll = [6, 0, 3, 5, 2, 7, 9, 8, 1, 11, 15, 12, 14, 16, -1]
-qsort(ll)
-print(ll)
+def is_sorted(ll):
+    for i in range(len(ll) - 1):
+        if not ll[i] <= ll[i + 1]:
+            return False
+    return True
+
+
+def run_test1():
+    ll = [6, 0, 3, 5, -2, 7, 9, 8, 1, -11, 15, 12, 2, 14, 16, -1, 4]
+    print(f"Original unsorted list is: {ll}")
+    qqsort(ll, pivot_threshold_count=12)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + " is " + iss + "sorted")
+
+
+def run_test2():
+    ll = [14, 12, 10, 8, 6, 4, 2, 0, -1, -2, -3, -4, -5, -6, -7]
+    print(f"Original unsorted list is: {ll}")
+    qqsort(ll, pivot_threshold_count=9)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + " is " + iss + "sorted")
+
+
+def run_test3():
+    ll = [1, 8, 7, -11, -2, 5, 4, 16, 15, -5, -6, 3, 2]
+    print(f"Original unsorted list is: {ll}")
+    qqsort(ll)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + " is " + iss + "sorted")
+
+
+def run_test4():
+    ll = np.random.rand(1000) * 10000.0
+    ll = ll.astype(dtype=np.int32)
+    ll = ll.tolist()
+    print(f"Original unsorted list is: {ll}")
+    qqsort(ll)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + "\n is " + iss + "sorted")
+
+
+if __name__ == "__main__":
+    run_test1()
+    print("done with test 1\n")
+    run_test2()
+    print('done with test 2\n')
+    run_test3()
+    print('done with test 3\n')
+    # run_test4()  # bigger test
+    # print('done with test 4\n')
+    x = 1
+
