@@ -63,7 +63,7 @@ def hoare_quicksort(unsorted):
                     insert_pivot = ilo
                 break
 
-        if insert_pivot:
+        if insert_pivot is not None:
             swap_val(ll, insert_pivot, ipivot)
             sort_quick(ll, lo, insert_pivot-1)
             sort_quick(ll, insert_pivot+1, hi)
@@ -204,11 +204,23 @@ def run_test_sqs1():
 
 
 def run_test_hoare():
-    ll = [1, 8, 7, -11, -2, 5, 4, 16, 15, -5, -6, 3, 2]
+    # ll = [1, 8, 7, -11, -2, 5, 4, 16, 15, -5, -6, 3, 2]
+    ll = [-7, -133, -41, -7, -111, 33, 0, 26, -37, -265]
     print(f"Original unsorted list is: {ll}")
     hoare_quicksort(ll)
     iss = "" if is_sorted(ll) else "not "
     print(str(ll) + " is " + iss + "sorted")
+
+
+def run_hoare_longtest():
+    ll = np.random.randn(1000) * 10000.0
+    ll = ll.astype(dtype=np.int32)
+    ll = ll.tolist()
+    print(f"Original unsorted list is: {ll}")
+    hoare_quicksort(ll)
+    # print(f"results: {ll}")
+    iss = "" if is_sorted(ll) else "not "
+    print("results: " + str(ll) + "\n is " + iss + "sorted")
 
 
 if __name__ == "__main__":
@@ -226,6 +238,9 @@ if __name__ == "__main__":
 
     run_test_hoare()
     print('done with test hoare\n')
+
+    run_hoare_longtest()
+    print('done with hoare longtest\n')
 
     x = 1
 
