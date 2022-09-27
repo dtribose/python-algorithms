@@ -3,8 +3,26 @@ from collections import deque
 import numpy as np
 
 
+def simple_quick_sort(unsorted):
+    # Not in-place sorting.
+    if len(unsorted) < 2:
+        return unsorted
+    pivot = unsorted[-1]
+
+    vals_above = []
+    vals_below = []
+
+    for v in unsorted[:-1]:
+        if v <= pivot:
+            vals_below.append(v)
+        else:
+            vals_above.append(v)
+
+    return simple_quick_sort(vals_below) + [pivot] + simple_quick_sort(vals_above)
+
+
 def qqsort(unsorted_list, pivot_threshold_count=None):
-    # find median value of first, last, and middle point
+    # in-place sorting of list
 
     if not pivot_threshold_count:
         pivot_threshold_count = 34
@@ -51,8 +69,8 @@ def qqsort(unsorted_list, pivot_threshold_count=None):
                 swap_val(ll, min_, max_)
                 return
         elif ulen > pivot_threshold_count:
-            pivot = mean_ix(ll, (min_, max_, (min_ + max_) // 2))
-            swap_val(ll, max_, pivot)
+            pivot_ = mean_ix(ll, (min_, max_, (min_ + max_) // 2))
+            swap_val(ll, max_, pivot_)
 
         pivot = border = max_
         pivot_value = ll[pivot]
@@ -71,6 +89,8 @@ def qqsort(unsorted_list, pivot_threshold_count=None):
         if len(swap_index):
             border = swap_index.popleft()
             swap_val(ll, pivot, border)
+
+        del swap_index
 
         # print(ll[min_:max_+1])
 
@@ -123,6 +143,14 @@ def run_test4():
     print(str(ll) + "\n is " + iss + "sorted")
 
 
+def run_test_sqs1():
+    ll = [1, 8, 7, -11, -2, 5, 4, 16, 15, -5, -6, 3, 2, -7, 18, 0]
+    print(f"Original unsorted list is: {ll}")
+    ll = simple_quick_sort(ll)
+    iss = "" if is_sorted(ll) else "not "
+    print(str(ll) + " is " + iss + "sorted")
+
+
 if __name__ == "__main__":
     run_test1()
     print("done with test 1\n")
@@ -132,5 +160,8 @@ if __name__ == "__main__":
     print('done with test 3\n')
     # run_test4()  # bigger test
     # print('done with test 4\n')
+
+    run_test_sqs1()
+    print("done with tests sqs-1")
     x = 1
 
