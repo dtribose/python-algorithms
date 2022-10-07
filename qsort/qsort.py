@@ -4,7 +4,12 @@ import numpy as np
 
 
 def simple_quick_sort(unsorted):
-    # Not in-place sorting.
+    """ Simple and non-in-place sorting algorithm to demonstrate some of the
+    key qualities of quicksort.
+    :param unsorted: List to sort
+    :return: Sorted list
+    """
+
     if len(unsorted) < 2:
         return unsorted
     pivot = unsorted[-1]
@@ -22,6 +27,12 @@ def simple_quick_sort(unsorted):
 
 
 def hoare_quicksort(unsorted):
+    """ An in place implementation of the Hoare version of quicksort.
+        Uses the right most value (with the largest index) as the pivot.
+
+    :param unsorted: List to be sorted
+    :return: None, after the list is sorted
+    """
 
     def swap_val(ll, i, j):
         lli_temp = ll[i]
@@ -30,6 +41,14 @@ def hoare_quicksort(unsorted):
         return
 
     def sort_quick(ll, lo, hi):
+        """ Subroutine that is called recursively to sort the current list or its sub-lists.
+            Sorts ll over the range from lo to hi in place.
+
+        :param ll: list to sort
+        :param lo: lowest index to sort
+        :param hi: highest index to sort
+        :return:
+        """
         length = hi - lo + 1
         if length < 2:
             return
@@ -65,6 +84,7 @@ def hoare_quicksort(unsorted):
 
         if insert_pivot is not None:
             swap_val(ll, insert_pivot, ipivot)
+
             sort_quick(ll, lo, insert_pivot-1)
             sort_quick(ll, insert_pivot+1, hi)
         else:
@@ -74,7 +94,12 @@ def hoare_quicksort(unsorted):
 
 
 def qqsort(unsorted_list, pivot_threshold_count=None):
-    # in-place sorting of list
+    """ Older version of quicksort for sorting in-place.
+
+    :param unsorted_list: List to sort
+    :param pivot_threshold_count: Threshold of length before subroutine checks three values to find the best pivot.
+    :return: None, after list is sorted.
+    """
 
     if not pivot_threshold_count:
         pivot_threshold_count = 34
@@ -87,6 +112,12 @@ def qqsort(unsorted_list, pivot_threshold_count=None):
 
     # Use the real mean not just the middle one @@@
     def mean_ix(ll, triple):
+        """ Find best of 3 values to use for sorting.
+
+        :param ll: list being sorted
+        :param triple: tuple of three indices - of the first, middle, and last value
+        :return: index of the middle of the three values
+        """
         first, second, third = triple
         a = ll[first]
         b = ll[second]
@@ -107,26 +138,30 @@ def qqsort(unsorted_list, pivot_threshold_count=None):
             else:
                 return third
 
-    def sort_quick(unsorted, min_, max_):
+    def sort_quick(ll, min_, max_):
+        """ Subroutine for quickly sorting an array.
+        Uses a queue to hold index value for values that are > pivot.
+        Sorts ll in place from index min_ to max_.
 
-        ll = unsorted
+        :param ll: list or sub-list to sort
+        :param min_: lowest index for sort
+        :param max_: upper index for sort
+        :return: None, after ll is sorted
+        """
+
         ulen = max_ - min_ + 1
 
-        # Should never enter is ulen = 0 or 1
+        # Will never enter is ulen = 0 or 1
         if ulen == 2:
-            if ll[min_] <= ll[max_]:
-                return
-            else:
-                # print(f"Swapping {ll[min_]} and {ll[max_]}")
+            if ll[min_] > ll[max_]:
                 swap_val(ll, min_, max_)
-                return
+            return
         elif ulen > pivot_threshold_count:
             pivot_ = mean_ix(ll, (min_, max_, (min_ + max_) // 2))
             swap_val(ll, max_, pivot_)
 
         pivot = border = max_
         pivot_value = ll[pivot]
-        # print("pivot value = {}".format(pivot_value))  # test only
 
         swap_index = deque()
         ii = min_
@@ -144,9 +179,7 @@ def qqsort(unsorted_list, pivot_threshold_count=None):
 
         del swap_index
 
-        # print(ll[min_:max_+1])
-
-        if border-1 - min_ > 0:
+        if border-1 - min_ > 0:  # ulen > 1
             sort_quick(ll, min_, border-1)
         if max_ - (border+1) > 0:
             sort_quick(ll, border+1, max_)
@@ -162,7 +195,7 @@ def is_sorted(ll):
 
 
 def run_test1():
-    ll = [6, 0, 3, 5, -2, 7, 9, 8, 1, -11, 15, 12, 2, 14, 16, -1, 4]
+    ll = [120, 6, 0, 3, 5, -2, 7, 9, 8, 1, -11, 15, 12, 2, 14, 16, -1, 4]
     print(f"Original unsorted list is: {ll}")
     qqsort(ll, pivot_threshold_count=12)
     iss = "" if is_sorted(ll) else "not "
