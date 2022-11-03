@@ -1,17 +1,26 @@
 # Root class for objects that can be traded.
 import numpy as np
 import time
+import json
+import logging
+
+QUOTEABLE_SYMBOLS = [r"^DJI", r"^IXIC", r"^SPX", "BAR"]
+TRADEABLE_SYMBOLS = ["DIA", "QQQ", "SPY", "FOO"]
+
+TtoQ_dict = {T: Q for (T, Q) in zip(TRADEABLE_SYMBOLS, QUOTEABLE_SYMBOLS) if T != "FOO"}
 
 
 class QuoteSystem:
 
 	# Could add a dictionary to map tradeables to quoteables.
+	# Think about how to create just one quote system.
 	def __init__(self):
 		pass
 
-	def start(self):
+	@staticmethod
+	def start():
 		# start up the external quote system.
-		pass
+		logging.info("Quote system has been started")
 
 	@staticmethod
 	def get_last_price(symbol):
@@ -50,7 +59,23 @@ class Tradeable(Quotable):
 			return "", 0, 0
 
 
+def get_configuration(config_file):
+
+	with open(config_file, 'r') as fp_:
+		data = json.load(fp_)
+
+	return data
+
+
 if __name__ == "__main__":
+
+	configuration_file = "/home/dctodd/dev/python/toy-algorithms/trading/config.json"
+	configuration = get_configuration(config_file=configuration_file)
+	dc = {t: q for (t, q) in zip(configuration["tradeable"]["t_list"], configuration["quoteable"]["q_list"])}
+
+	if dc["SPY"] == TtoQ_dict["SPY"]:
+		print("Dictionaries look good!")
+
 	position = 0
 	dollars = 2000
 
@@ -73,9 +98,13 @@ if __name__ == "__main__":
 
 		position += filled_quantity
 		dollars -= filled_price * filled_quantity
-		time.sleep(.3)
+		time.sleep(.003)
 
 		if dollars < 0 or quantity_ == 0:
 			break
 
-	print(f"\nFinal position is {position} and total dollars are {dollars}\n")
+	out_str = f"\nFinal position is {position} and total dollars are {dollars}\n"
+	print(out_str)
+	results_file = "/home/dctodd/dev/python/toy-algorithms/trading/results.txt"
+	with open(results_file, 'w') as fp:
+		fp.write(out_str)

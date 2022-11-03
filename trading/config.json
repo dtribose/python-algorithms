@@ -1,0 +1,12 @@
+{
+	"tradeable": {
+		"t_list": ["SPY",
+			       "QQQ",
+			       "DIA"]
+		},
+	"quoteable": {
+		"q_list": ["^SPX",
+			       "^IXIC",
+			       "^DJI"]
+		}
+}
