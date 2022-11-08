@@ -1,0 +1,10 @@
+Build a tree structure
+Have it double in size on every level
+have the value of every node equal to the hash of the sum of hashes of the two children nodes
+If a leaf node is initialized with no value make it zero.
+If a leaf node is initialized with a value, it's stored value will be the hash of that value.
+This is a sparse tree and we want to intialize it to 64 levels.
+Only store nodes that are not initialized with zero.
+Create an update script so that updating a leaf node updates all the parents.
+Initially from Interview on 11/3/22 
+
