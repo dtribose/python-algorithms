@@ -1,11 +1,10 @@
 import pandas as pd
 import os
 import numpy as np
-import sqlite3
-import sqlalchemy as sa
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 
+# Paths originally referenced directories on a Windows PC.
 
 PF_ROOT = "C:\\Users\\David\\dev\\toy-algorithms"
 COLLECTION_ROOT = os.path.join(PF_ROOT, "pandas-fundamentals\\demos\\collection-master")
@@ -32,9 +31,7 @@ print("\nNumber or art works created by Francis Bacon = {}".format(artist_counts
 df1 = pd.read_pickle(PICKLE_FILE)
 assert(df.shape == df1.shape)
 
-## loc() vs. iloc()
-
-# confirm we get an array of ints when using np.where()
+# Checking that we get an array of ints when using np.where()
 foob = np.where(df1['artist'].str.contains('Robert'))
 
 # Integer indexers only work with the iloc() method.
@@ -93,7 +90,7 @@ print("artist with the largest painting ({} mm**2) is {}".format(max_area, df1_p
 dfgb = df1.groupby('artist')
 
 print('\n')
-#print(dfgb.head())
+# print(dfgb.head())  # for testing
 
 small_df = df1.iloc[49980:50019, :].copy()
 grouped = small_df.groupby('artist')
@@ -103,15 +100,14 @@ print("typed grouped = {}".format(type(grouped)))
 for name, group_df in grouped:
     print("\n{}, acquired {}".format(name, group_df['acquisitionYear'].min()))
 
-# Next two functions will illustrate
-# how one could use groupby and looping to fill values
-# based on the subgroup. More efficient techniques
-# will be illustrated later.
+# Next two functions will illustrate how one could use groupby and looping to fill values
+# based on the subgroup. More efficient techniques will be illustrated later.
 foo_df = small_df.copy()
 
 pd.to_numeric(foo_df['height'], errors='coerce')
 foo_df.at[4708, 'height'] = 155.
 foo_df.at[[4704,11838,16435], 'height'] = np.NaN
+
 
 def fill_values_most_frequent(series):
     values_counted = series.value_counts()
@@ -120,6 +116,7 @@ def fill_values_most_frequent(series):
     most_frequent = values_counted.index[0]
     new_series = series.fillna(most_frequent)
     return new_series
+
 
 def fill_by_artist(source_df):
     new_group_dfs = []
