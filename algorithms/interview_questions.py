@@ -164,16 +164,6 @@ def test_regular_expression2():
         print(fc.group(0))
 
 
-
-
-    x = 1
-
-
-
-
-
-
-
 class DB(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -400,6 +390,7 @@ def test_dataclass():
 
     print()
 
+
 # Classes section.
 # add type annotations
 # add cls members, @classmethod, and @staticmethod.
@@ -472,7 +463,6 @@ def test_classes():
     e.pause()
 
     pass
-
 
 
 def test_secrets():
@@ -605,8 +595,4 @@ if __name__ == "__main__":
     test_regular_expression2()
 
     pass
-
-
-
-
 
