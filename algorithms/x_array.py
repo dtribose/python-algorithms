@@ -1,8 +1,9 @@
+# Beginning experimentation with xarray.
+
 import xarray as xr
 import numpy as np
 import pandas as pd
 
-# todo: What difference between rand() versus random()
 data = np.random.random((6,3)) * 1e5
 
 locs = ['CA', 'OR', 'WA']
