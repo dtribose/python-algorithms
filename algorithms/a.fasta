@@ -1,0 +1,8 @@
+# this is a test
+# of the emergency dna file format
+# reading and processiong system
+> contig1
+AAGTCAAGGTCAGAGGGCCTACTAAAAGCGCTTTAAGAGCTGCCAGTCATTAATCGCTGAG
+TCGAGACTCGATCGAATGAGCCACTATG
+>    contig2
+AANNNAGCTAGACCTAGG

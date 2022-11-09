@@ -4,7 +4,6 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import time
 
 
 def process_kmer_file(filename, kmer_len, show_contigs=True):
@@ -49,12 +48,13 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
         contig_dict[contig_name] = contig
 
         print("Done reading in data\n")
-        print("Processing contigs!")
+        print(f"Processing contigs for a kmer length of {kmer_len}:")
 
         # Get kmers and counts for each kmer.
         kmer_dict = {}
+        print("For contig... ", end='')
         for contig_name, contig in contig_dict.items():
-            print(f"For contig, '{contig_name}'")
+            print(f"'{contig_name}'...", end='')
             for i in range(len(contig)//kmer_len):
                 kmer = contig[kmer_len*i:kmer_len*i+kmer_len]
                 # print(kmer)
@@ -62,7 +62,7 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
                     kmer_dict[kmer] += 1
                 else:
                     kmer_dict[kmer] = 1
-
+        print('\n')
         print(f"kmer_dict = {kmer_dict}")
         vals = list(kmer_dict.values())
         print(f"kmer_dict.values() = {vals}")
@@ -74,23 +74,20 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
           
         # convert both into one numpy array
         counts = np.asarray((uni, freq))
-        kmer_counts_dict = {u:f for u,f in zip(uni, freq)}
+        kmer_counts_dict = {u: f for u, f in zip(uni, freq)}
 
         print(f"kmer_counts_dict = {kmer_counts_dict}")
 
-        # And Plot, using Matplotlib
-        # fig, ax = plt.subplots()
-        # ax.plot(uni, freq)
-        # plt.show()
-
         # Try implementing as a histogram.
         fig, axs = plt.subplots(tight_layout=True)
-        axs.hist(vals, bins=[.5,1.5, 2.5, 3.5, 4.5])
+        fig.suptitle("For Kmer Length of 3", fontsize=14)
+        axs.set_title("No of Unique kmers vs kmer Occurrence")
+        axs.hist(vals, bins=[.5, 1.5, 2.5, 3.5, 4.5])
         axs.plot()
         plt.show()
 
 
 if __name__ == "__main__":
 
-    filename = r"/home/dctodd/dev/python/toy-algorithms/algorithms/a.fasta"
-    process_kmer_file(filename, 3)
+    file_name = r"/home/dctodd/dev/python/toy-algorithms/algorithms/a.fasta"
+    process_kmer_file(file_name, 3)
