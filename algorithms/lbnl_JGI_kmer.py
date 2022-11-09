@@ -1,9 +1,11 @@
+# Processing fasta file, printing configs and kmer counts
 # kmer.py
 
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+
 
 def process_kmer_file(filename, kmer_len, show_contigs=True):
 
@@ -21,8 +23,6 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
             elif line.startswith('>'):
                 contig_name = line[1:].strip()
                 break
-
-        # for line in fp.readline():  # why doesn't this work?
 
         # Read file and get contig_name and contig string.
         for line in fp:
@@ -53,7 +53,7 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
 
         # Get kmers and counts for each kmer.
         kmer_dict = {}
-        for contig_name,contig in contig_dict.items():
+        for contig_name, contig in contig_dict.items():
             print(f"For contig, '{contig_name}'")
             for i in range(len(contig)//kmer_len):
                 kmer = contig[kmer_len*i:kmer_len*i+kmer_len]
@@ -79,9 +79,9 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
         print(f"kmer_counts_dict = {kmer_counts_dict}")
 
         # And Plot, using Matplotlib
-        #fig, ax = plt.subplots()
-        #ax.plot(uni, freq)
-        #plt.show()
+        # fig, ax = plt.subplots()
+        # ax.plot(uni, freq)
+        # plt.show()
 
         # Try implementing as a histogram.
         fig, axs = plt.subplots(tight_layout=True)
@@ -89,7 +89,8 @@ def process_kmer_file(filename, kmer_len, show_contigs=True):
         axs.plot()
         plt.show()
 
+
 if __name__ == "__main__":
 
-    filename = r'C:\Users\David\dev\toy-algorithms\algorithms\a.fasta'
+    filename = r"/home/dctodd/dev/python/toy-algorithms/algorithms/a.fasta"
     process_kmer_file(filename, 3)
