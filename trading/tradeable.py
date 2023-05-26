@@ -23,7 +23,7 @@ class QuoteSystem:
 		logging.info("Quote system has been started")
 
 	@staticmethod
-	def get_last_price(symbol):
+	def get_last_price(symbol: str):
 		print(f"getting price for {symbol}")
 		base = np.random.randint(low=10, high=200)
 		offset = np.random.random()
@@ -35,21 +35,21 @@ class Quotable:
 	quote_system = QuoteSystem()
 	quote_system.start()
 
-	def __init__(self, name):
+	def __init__(self, name: str):
 		self.symbol = name
 		pass
 
 	@classmethod
-	def get_price(cls, symbol_):
+	def get_price(cls, symbol_: str):
 		return cls.quote_system.get_last_price(symbol=symbol_)
 	
 	
 class Tradeable(Quotable):
 
-	def __init__(self, name):
+	def __init__(self, name: str):
 		super().__init__(name)
 
-	def buy(self, quantity, price, price_range):
+	def buy(self, quantity: int, price: float, price_range: float):
 		fill_price = self.get_price(self.symbol)
 		if abs(fill_price - price) < price_range:
 			# Could have it filled with a variable amount that depends on where
@@ -59,7 +59,7 @@ class Tradeable(Quotable):
 			return "", 0, 0
 
 
-def get_configuration(config_file):
+def get_configuration(config_file: str):
 
 	with open(config_file, 'r') as fp_:
 		data = json.load(fp_)
